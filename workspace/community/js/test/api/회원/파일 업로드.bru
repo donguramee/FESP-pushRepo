@@ -1,0 +1,15 @@
+meta {
+  name: 파일 업로드
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{URL}}/files
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  attach: @file(/Users/dongura_me/Downloads/31D169E6-3EA8-4CD5-8EE1-DDF592A76B21.JPG)
+}
