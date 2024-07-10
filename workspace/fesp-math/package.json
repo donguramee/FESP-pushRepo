@@ -1,0 +1,16 @@
+{
+  "name": "fesp2-math",
+  "version": "0.0.1",
+  "description": "Math utility from Front-End School Plus 2",
+  "main": "dist/math.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dongurame",
+  "license": "ISC",
+  "keywords": [
+    "math",
+    "fesp"
+  ]
+}

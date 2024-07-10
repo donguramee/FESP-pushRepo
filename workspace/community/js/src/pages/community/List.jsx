@@ -2,7 +2,45 @@ import Button from "@components/Button";
 import Submit from "@components/Submit";
 import React from "react";
 
-function List() {
+function List(result) {
+  const onSubmit = (e) => {
+    e.preventDefault();
+    // 이미지 업로드 요청
+    const formData = new FormData();
+    formData.append("attach", profileImage);
+    fetch("https://api.fesp.shop/files", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        const imagePath = result.item[0].path;
+
+        fetch("https://api.fesp.shop/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            password: pw,
+            name: nickName,
+            profileImage: imagePath,
+            type: "user",
+          }),
+        })
+          .then((response) => response.json())
+          .then(() => {
+            //result 입력시 회원정보 콘솔에 노출
+            console.log("회원가입 성공"); //result 입력시 회원정보 콘솔에 노출
+            navigate("/user/login"); // 로그인 성공하면 홈화면으로 가기
+
+            // 성공 시 처리 로직
+          })
+          .catch((error) => {
+            console.error(alert(), "로그인 실패 ");
+            // 에러 시 처리 로직
+          });
+      });
+  };
   return (
     <main className="min-w-80 p-10">
       <div className="text-center py-4">
@@ -61,20 +99,6 @@ function List() {
             </tr>
           </thead>
           <tbody>
-            {/* 로딩 상태 표시 */}
-            {/*
-              <tr>
-                <td colSpan="6" className="py-20 text-center">로딩중...</td>
-              </tr>
-            */}
-
-            {/* 에러 메세지 출력 */}
-            {/*
-              <tr>
-                <td colSpan="6" className="py-20 text-center">에러 메세지</td>
-              </tr>
-            */}
-
             {/* 본문 출력 */}
             <tr className="border-b border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 ease-in-out">
               <td className="p-2 text-center">2</td>
@@ -89,21 +113,6 @@ function List() {
               <td className="p-2 text-center hidden sm:table-cell">2</td>
               <td className="p-2 truncate text-center hidden sm:table-cell">
                 2024.07.05 13:39:23
-              </td>
-            </tr>
-            <tr className="border-b border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 ease-in-out">
-              <td className="p-2 text-center">1</td>
-              <td
-                className="p-2 truncate indent-4 cursor-pointer"
-                onClick={() => (location.href = "/info/1")}
-              >
-                좋은 소식이 있습니다.
-              </td>
-              <td className="p-2 text-center truncate">제이지</td>
-              <td className="p-2 text-center hidden sm:table-cell">22</td>
-              <td className="p-2 text-center hidden sm:table-cell">5</td>
-              <td className="p-2 truncate text-center hidden sm:table-cell">
-                2024.07.03 17:59:13
               </td>
             </tr>
           </tbody>

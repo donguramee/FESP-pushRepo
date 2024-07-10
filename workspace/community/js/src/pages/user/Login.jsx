@@ -1,17 +1,50 @@
 import Button from "@components/Button";
 import { InputStyle, LabelStyle } from "@components/Style.style";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
+function Login(result) {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
 
-  const onSubmit = () => {
-    preventDefault();
+  const navigate = useNavigate();
 
-    history.back();
+  const validation = (e) => {
+    const targetId = e.target.id;
+    const value = e.target.value;
+
+    if (targetId === "user-email") {
+      setEmail(value);
+    } else if (targetId === "user-pw") {
+      setPw(value);
+    }
   };
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    fetch("https://api.fesp.shop/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password: pw,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.ok === 1) {
+          // result.success가 로그인 성공 여부를 나타낸다고 가정
+          console.log("결과: ", result);
+          // navigate("/info"); // 로그인 성공 시 홈 화면으로 이동
+        } else if (result.ok === 0) {
+          alert(result.message);
+        }
+      })
+      .catch((error) => {
+        console.error("에러: ", error);
+      });
+  };
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
       <div className="p-8 border border-gray-200 rounded-lg w-full max-w-md dark:bg-gray-600 dark:border-0">
@@ -29,7 +62,7 @@ function Login() {
               type="email"
               placeholder="E-mail을 입력해주세요."
               value={email}
-              // onChange={validation}
+              onChange={validation}
               required
             />
           </div>
@@ -38,13 +71,12 @@ function Login() {
             <InputStyle
               id="user-pw"
               type="password"
-              placeholder="비밀전호를 적어주세요"
+              placeholder="비밀번호를 적어주세요"
               value={pw}
-              // onChange={validation}
+              onChange={validation}
+              autoComplete="false"
               required
             />
-            {/* 입력값 검증 에러 출력 */}
-            {/* <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">에러 메세지</p> */}
             <a
               href="#"
               className="block mt-6 ml-auto text-gray-500 text-sm dark:text-gray-300 hover:underline"
@@ -59,10 +91,7 @@ function Login() {
             >
               로그인
             </Button>
-            <a
-              href="/user/signup"
-              className="ml-8 text-gray-800 hover:underline"
-            >
+            <a href="/" className="ml-8 text-gray-800 hover:underline">
               회원가입
             </a>
           </div>

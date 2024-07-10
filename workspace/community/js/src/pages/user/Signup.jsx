@@ -1,14 +1,18 @@
 import Button from "@components/Button";
 import { Incorrect, InputStyle, LabelStyle } from "@components/Style.style";
 import Submit from "@components/Submit";
+// import { update } from "lodash";
 import React, { useEffect, useState } from "react";
+
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   // 인풋 상태
   const [nickName, setNickName] = useState("");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
-  const [profile, setProfile] = useState(null);
+  const [profileImage, setProfileImage] = useState("");
+  const navigate = useNavigate();
 
   //입력지연 타이며
   const [typingTimer, setTypingTimer] = useState(null);
@@ -23,10 +27,22 @@ function Signup() {
   const [nickNameErrorMessage, setNickNameErrorMessage] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
-  const [disable, setDisable] = useState(true);
+  const [disabled, setDisabled] = useState(true);
+
+  const handleFileChange = (e) => {
+    const files = e.target.files[0];
+    if (files) {
+      setProfileImage(files);
+      console.log(files);
+    }
+  };
 
   useEffect(() => {
-    setDisable(!(email && pw.length >= 8 && nickName));
+    if (!(email && pw.length >= 8 && nickName)) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
   }, [email, pw, nickName]);
 
   const validation = (e) => {
@@ -46,7 +62,6 @@ function Signup() {
     } else if (targetId === "user-email") {
       setEmail(value);
       const isEmailValid = emailPattern.test(value);
-      // setEmailValid(isEmailValid);
 
       if (!value) {
         setEmailErrorMessage(false);
@@ -73,32 +88,41 @@ function Signup() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-
+    // 이미지 업로드 요청
     const formData = new FormData();
-
-    fetch("https://api.fesp.shop/users", {
+    formData.append("attach", profileImage);
+    fetch("https://api.fesp.shop/files", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json", // JSON 형태로 데이터를 보내기 위해 Content-Type 헤더 설정
-      },
-      body: JSON.stringify({
-        email,
-        password: pw,
-        name: nickName,
-        type: "user",
-      }),
+      body: formData,
     })
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((result) => {
-        console.log("결과: ", result);
-        // 성공 시 처리 로직
-      })
-      .catch((error) => {
-        console.error("에러: ", error);
-        // 에러 시 처리 로직
-      });
+        const imagePath = result.item[0].path;
 
-    // history.back();
+        fetch("https://api.fesp.shop/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            password: pw,
+            name: nickName,
+            profileImage: imagePath,
+            type: "user",
+          }),
+        })
+          .then((response) => response.json())
+          .then(() => {
+            //result 입력시 회원정보 콘솔에 노출
+            console.log("회원가입 성공"); //result 입력시 회원정보 콘솔에 노출
+            navigate("/user/login"); // 로그인 성공하면 홈화면으로 가기
+
+            // 성공 시 처리 로직
+          })
+          .catch((error) => {
+            console.error(alert(), "로그인 실패 ");
+            // 에러 시 처리 로직
+          });
+      });
   };
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
@@ -141,9 +165,10 @@ function Signup() {
             <InputStyle
               id="user-pw"
               type="password"
-              placeholder="비밀전호를 적어주세요"
+              placeholder="비밀번호를 적어주세요"
               value={pw}
               onChange={validation}
+              autoComplete="false"
               required
             />
             {passwordErrorMessage && (
@@ -151,23 +176,19 @@ function Signup() {
             )}
           </div>
           <div className="mb-4">
-            <LabelStyle
-              className="block text-gray-700 dark:text-gray-200 mb-2"
-              htmlFor="user-profile"
-            >
-              포로필이미지
-            </LabelStyle>
+            <LabelStyle htmlFor="user-profile">포로필이미지</LabelStyle>
             <InputStyle
               id="user-profile"
               type="file"
               placeholder="프로필이미지를 등록해주세요"
-              onChange={validation}
               accept="image/*"
+              // value={profileImage}
+              onChange={handleFileChange}
               required
             />
           </div>
           <div className="mt-10 flex justify-center items-center">
-            <Submit disabled={disable}>회원가입</Submit>
+            <Submit disabled={disabled}>회원가입</Submit>
             <Button type="reset" bgColor="gray" onClick={() => history.back()}>
               취소
             </Button>

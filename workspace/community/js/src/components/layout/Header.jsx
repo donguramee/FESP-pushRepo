@@ -2,6 +2,10 @@ import Button from "@components/Button";
 import React from "react";
 
 function Header() {
+  // const [login, setLogin] = useState(false);
+
+  // const logOut = () => {};
+
   return (
     <header className="px-8 min-w-80 bg-slate-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 transition-color duration-500 ease-in-out">
       <nav className="flex flex-wrap justify-center items-center p-4 md:flex-nowrap md:justify-between">
@@ -30,17 +34,8 @@ function Header() {
         </div>
 
         <div className="w-1/2 order-1 flex justify-end items-center md:order-2 md:w-auto">
-          {/* <!-- 로그인 후 -->
-              <!--
-              <p classNameName="flex items-center">
-                <img className="w-8 rounded-full mr-2" src="https://api.fesp.shop/files/00-sample/user-muzi.webp" />
-                용쌤님 :)
-                <button type="button" className="bg-gray-900 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded" onClick="location.href='/'">로그아웃</button>
-              </p>
-              --> */}
-
-          {/* <!-- 로그인 전 --> */}
           <div className="flex justify-end">
+            <Button size="sm">로그아웃</Button>
             <Button size="sm" onClick={() => (location.href = "/user/login")}>
               로그인
             </Button>
