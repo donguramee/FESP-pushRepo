@@ -3,9 +3,9 @@ import { InputStyle, LabelStyle } from "@components/Style.style";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Login(result) {
-  const [email, setEmail] = useState("");
-  const [pw, setPw] = useState("");
+function Login(posts) {
+  const [email, setEmail] = useState("dongurame@naver.com");
+  const [pw, setPw] = useState("11111111");
 
   const navigate = useNavigate();
 
@@ -36,7 +36,9 @@ function Login(result) {
         if (result.ok === 1) {
           // result.success가 로그인 성공 여부를 나타낸다고 가정
           console.log("결과: ", result);
-          // navigate("/info"); // 로그인 성공 시 홈 화면으로 이동
+          sessionStorage.setItem("isLoggedIn", result.item.token.accessToken);
+
+          navigate("/info"); // 로그인 성공 시 홈 화면으로 이동
         } else if (result.ok === 0) {
           alert(result.message);
         }
@@ -45,6 +47,7 @@ function Login(result) {
         console.error("에러: ", error);
       });
   };
+
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
       <div className="p-8 border border-gray-200 rounded-lg w-full max-w-md dark:bg-gray-600 dark:border-0">
@@ -67,7 +70,7 @@ function Login(result) {
             />
           </div>
           <div className="mb-4">
-            <LabelStyle htmlFor="password">비밀번호</LabelStyle>
+            <LabelStyle htmlFor="password">뭘꺼용</LabelStyle>
             <InputStyle
               id="user-pw"
               type="password"
@@ -77,6 +80,7 @@ function Login(result) {
               autoComplete="false"
               required
             />
+
             <a
               href="#"
               className="block mt-6 ml-auto text-gray-500 text-sm dark:text-gray-300 hover:underline"

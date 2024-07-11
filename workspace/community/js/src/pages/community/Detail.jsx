@@ -1,12 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CommentList from "./CommentList";
+import Button from "@components/Button";
 
 function Detail() {
+  const [postItem, setPostItem] = useState("");
+
+  useEffect(() => {
+    fetch("https://api.fesp.shop/posts/{_id}", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((result) => setPostItem(result.item))
+      .catch((error) => {
+        console.error("게시글 불러오기 실패");
+      });
+  }, []);
+
   return (
     <main className="container mx-auto mt-4 px-4">
       <section className="mb-8 p-4">
         <div className="font-semibold text-xl">
-          제목 : 좋은 소식이 있습니다.
+          제목 : `${postItem.title.title}`
         </div>
         <div className="text-right text-gray-400">작성자 : 제이지</div>
         <div className="mb-4">
@@ -22,27 +38,24 @@ function Detail() {
           <hr />
         </div>
         <div className="flex justify-end my-4">
-          <button
-            type="button"
+          <Button
             className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded"
-            onClick={() => history.back()}
+            // onClick={}
           >
             목록
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
             className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded"
-            onClick={() => (location.href = "/info/1/edit")}
+            // onClick={}
           >
             수정
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
             className="bg-red-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded"
-            onClick={() => (location.href = "/info")}
+            // onClick={}
           >
             삭제
-          </button>
+          </Button>
         </div>
       </section>
       <CommentList />

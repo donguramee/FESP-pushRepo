@@ -1,46 +1,9 @@
 import Button from "@components/Button";
 import Submit from "@components/Submit";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import ListItem from "./ListItem";
 
-function List(result) {
-  const onSubmit = (e) => {
-    e.preventDefault();
-    // 이미지 업로드 요청
-    const formData = new FormData();
-    formData.append("attach", profileImage);
-    fetch("https://api.fesp.shop/files", {
-      method: "POST",
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const imagePath = result.item[0].path;
-
-        fetch("https://api.fesp.shop/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            password: pw,
-            name: nickName,
-            profileImage: imagePath,
-            type: "user",
-          }),
-        })
-          .then((response) => response.json())
-          .then(() => {
-            //result 입력시 회원정보 콘솔에 노출
-            console.log("회원가입 성공"); //result 입력시 회원정보 콘솔에 노출
-            navigate("/user/login"); // 로그인 성공하면 홈화면으로 가기
-
-            // 성공 시 처리 로직
-          })
-          .catch((error) => {
-            console.error(alert(), "로그인 실패 ");
-            // 에러 시 처리 로직
-          });
-      });
-  };
+function List() {
   return (
     <main className="min-w-80 p-10">
       <div className="text-center py-4">
@@ -99,22 +62,35 @@ function List(result) {
             </tr>
           </thead>
           <tbody>
+            <ListItem />
             {/* 본문 출력 */}
-            <tr className="border-b border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 ease-in-out">
-              <td className="p-2 text-center">2</td>
-              <td
-                className="p-2 truncate indent-4 cursor-pointer"
-                onClick={() => (location.href = "/info/2")}
-              >
-                안녕하세요.
-              </td>
-              <td className="p-2 text-center truncate">용쌤</td>
-              <td className="p-2 text-center hidden sm:table-cell">29</td>
-              <td className="p-2 text-center hidden sm:table-cell">2</td>
-              <td className="p-2 truncate text-center hidden sm:table-cell">
-                2024.07.05 13:39:23
-              </td>
-            </tr>
+            {/* {posts && //처음에 posts를 불러오면 빈배열이기 때문에 에러발생 posts를 먼저 불러오고 posts의 배열들 불러오기
+              posts.map((post, index) => {
+                index = posts.length - index;
+                return (
+                  <tr className="border-b border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 ease-in-out">
+                    <td className="p-2 text-center">{index}</td>
+                    <td
+                      className="p-2 truncate indent-4 cursor-pointer"
+                      onClick={() => (location.href = "/info/2")}
+                    >
+                      {post.title}
+                    </td>
+                    <td className="p-2 text-center truncate">
+                      {post.user.name}
+                    </td>
+                    <td className="p-2 text-center hidden sm:table-cell">
+                      {post.views}
+                    </td>
+                    <td className="p-2 text-center hidden sm:table-cell">
+                      {post.repliesCount}
+                    </td>
+                    <td className="p-2 truncate text-center hidden sm:table-cell">
+                      {post.createdAt}
+                    </td>
+                  </tr>
+                );
+              })} */}
           </tbody>
         </table>
         <hr />

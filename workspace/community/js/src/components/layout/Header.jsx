@@ -1,10 +1,34 @@
 import Button from "@components/Button";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
-  // const [login, setLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
 
-  // const logOut = () => {};
+  const loginCheck = () => {
+    if (sessionStorage.getItem("isLoggedIn")) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  };
+  const navigate = useNavigate();
+
+  const logOut = () => {
+    sessionStorage.clear();
+    setIsLogin(false);
+    navigate("/user/login");
+  };
+
+  const logIn = () => {
+    sessionStorage.setItem("isLoggedIn", "true");
+    setIsLogin(true);
+    navigate("/info");
+  };
+
+  useEffect(() => {
+    loginCheck();
+  }, []);
 
   return (
     <header className="px-8 min-w-80 bg-slate-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 transition-color duration-500 ease-in-out">
@@ -35,17 +59,24 @@ function Header() {
 
         <div className="w-1/2 order-1 flex justify-end items-center md:order-2 md:w-auto">
           <div className="flex justify-end">
-            <Button size="sm">로그아웃</Button>
-            <Button size="sm" onClick={() => (location.href = "/user/login")}>
-              로그인
-            </Button>
-            <Button
-              size="sm"
-              bgColor="gray"
-              onClick={() => (location.href = "/user/signup")}
-            >
-              회원가입
-            </Button>
+            {isLogin ? (
+              <Button size="sm" onClick={logOut}>
+                로그아웃
+              </Button>
+            ) : (
+              <>
+                <Button size="sm" onClick={logIn}>
+                  로그인
+                </Button>
+                <Button
+                  size="sm"
+                  bgColor="gray"
+                  onClick={() => (location.href = "/user/signup")}
+                >
+                  회원가입
+                </Button>
+              </>
+            )}
           </div>
 
           {/* <!-- 라이트/다크 모드 전환 --> */}
